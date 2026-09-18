@@ -9,7 +9,13 @@ const STAGES = ['OBSERVE', 'MEASURE', 'HYPOTHESIS', 'CHECK', 'IDENTIFY', 'FIX', 
  * DebugCircuit — symptom → measurement → hypothesis → check → fault → fix → why.
  * The fault is never revealed before the student commits to a hypothesis.
  */
-export function DebugLab({ fault }: { fault: DebugFault }) {
+export function DebugLab({
+  fault,
+  topicId,
+}: {
+  fault: DebugFault
+  topicId: string
+}) {
   const { recordDebug, recordAttempt } = useProgress()
   const [stage, setStage] = useState(0)
   const [hyp, setHyp] = useState<string | null>(null)
@@ -25,7 +31,7 @@ export function DebugLab({ fault }: { fault: DebugFault }) {
     if (!hyp) return
     recordAttempt({
       questionId: `${fault.id}:hypothesis`,
-      topicId: 'u1t1',
+      topicId,
       skill: 'debugging',
       correct: hyp === fault.correctHypothesisId,
       marks: 1,
@@ -42,7 +48,7 @@ export function DebugLab({ fault }: { fault: DebugFault }) {
     if (!fix) return
     recordAttempt({
       questionId: `${fault.id}:fix`,
-      topicId: 'u1t1',
+      topicId,
       skill: 'debugging',
       correct: fix === fault.correctFixId,
       marks: 1,

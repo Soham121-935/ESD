@@ -86,10 +86,10 @@ for (const m of ['beginner', 'intermediate', 'exam'] as const) {
 /* Reusable components */
 render('PerformanceMatrix', <PerformanceMatrix spec={CLASSIFICATION_MATRIX} />)
 render('InteractiveCircuit', <InteractiveCircuit nodes={SYSTEM_STAGES} edges={SYSTEM_EDGES} />)
-render('NumericalSolver', wrap(<NumericalSolver problem={TEMP_RANGE_PROBLEM} />))
+render('NumericalSolver', wrap(<NumericalSolver problem={TEMP_RANGE_PROBLEM} topicId="u1t1" />))
 render('TemperatureWindowSim', <TemperatureWindowSim />)
 render('DesignChallenge', wrap(<DesignChallenge spec={TICKET_DESIGN} topicId="u1t1" />))
-DEBUG_CASES.forEach((d, i) => render(`DebugLab ${i + 1}`, wrap(<DebugLab fault={d} />)))
+DEBUG_CASES.forEach((d, i) => render(`DebugLab ${i + 1}`, wrap(<DebugLab fault={d} topicId="u1t1" />)))
 render(
   'QuizEngine (mcq)',
   wrap(<QuizEngine questions={TOPIC1_QUESTIONS.filter((q) => q.type === 'mcq')} title="MCQ" />),

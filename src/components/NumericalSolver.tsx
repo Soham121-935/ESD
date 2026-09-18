@@ -25,7 +25,13 @@ function entryIsCorrect(entry: StepEntry, raw: string): boolean {
  * The student enters every intermediate quantity. A wrong attempt names the failing
  * entry and offers a hint; the full substitution is only revealed once the step is solved.
  */
-export function NumericalSolver({ problem }: { problem: NumericalProblem }) {
+export function NumericalSolver({
+  problem,
+  topicId,
+}: {
+  problem: NumericalProblem
+  topicId: string
+}) {
   const { recordAttempt } = useProgress()
   const [inputs, setInputs] = useState<Record<string, string>>({})
   const [status, setStatus] = useState<Record<string, StepStatus>>({})
@@ -59,7 +65,7 @@ export function NumericalSolver({ problem }: { problem: NumericalProblem }) {
       setResults((r) => ({ ...r, [step.id]: { wrong: [] } }))
       recordAttempt({
         questionId: `${problem.id}:${step.id}`,
-        topicId: problem.id.startsWith('u1t1') ? 'u1t1' : problem.id,
+        topicId,
         skill: 'numerical',
         correct: true,
         marks: 1,
@@ -69,7 +75,7 @@ export function NumericalSolver({ problem }: { problem: NumericalProblem }) {
       setResults((r) => ({ ...r, [step.id]: { wrong } }))
       recordAttempt({
         questionId: `${problem.id}:${step.id}`,
-        topicId: problem.id.startsWith('u1t1') ? 'u1t1' : problem.id,
+        topicId,
         skill: 'numerical',
         correct: false,
         marks: 1,

@@ -133,7 +133,7 @@ export function Topic1Page() {
 
       {tab === 'numericals' && (
         <>
-          <NumericalSolver problem={TEMP_RANGE_PROBLEM} />
+          <NumericalSolver problem={TEMP_RANGE_PROBLEM} topicId={TOPIC1.id} />
           <hr />
           <TemperatureWindowSim />
         </>
@@ -263,7 +263,7 @@ export function Topic1Page() {
               </button>
             ))}
           </div>
-          <DebugLab fault={DEBUG_CASES[debugIndex]} />
+          <DebugLab fault={DEBUG_CASES[debugIndex]} topicId={TOPIC1.id} />
         </>
       )}
 
