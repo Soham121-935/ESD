@@ -9,6 +9,7 @@ import { Topic5Page } from './pages/Topic5Page'
 import { Topic6Page } from './pages/Topic6Page'
 import { PlannedTopicPage } from './pages/PlannedTopicPage'
 import { Unit1BankPage } from './pages/Unit1BankPage'
+import { Unit1TestPage } from './pages/Unit1TestPage'
 import { TopicProgressDot } from './components/ProgressTracker'
 import { MODE_LABEL } from './types'
 
@@ -64,6 +65,16 @@ function Sidebar() {
             >
               <span className="num">Σ</span>
               <span>Question Bank (Unit 1)</span>
+              <span className="dot" />
+            </button>
+          </li>
+          <li>
+            <button
+              className={`topic-link ${path === '/u1/test' ? 'active' : ''}`}
+              onClick={() => navigate('/u1/test')}
+            >
+              <span className="num">✎</span>
+              <span>Final Test (Sections A–H)</span>
               <span className="dot" />
             </button>
           </li>
@@ -139,6 +150,7 @@ function Shell() {
           <Routes>
             <Route path="/" element={<Navigate to="/u1/u1t1" replace />} />
             <Route path="/u1/bank" element={<Unit1BankPage />} />
+            <Route path="/u1/test" element={<Unit1TestPage />} />
             <Route path="/u1/:topicId" element={<TopicRouter />} />
             <Route path="*" element={<Navigate to="/u1/u1t1" replace />} />
           </Routes>

@@ -20,10 +20,10 @@ export const SOURCE_NOTE6 = {
 export const DESIGN_PARAMS: MatrixParam[] = [
   { id: 'accuracy', label: 'Measurement accuracy', higherIsBetter: true, defaultWeight: 5 },
   { id: 'env', label: 'Environmental capability', higherIsBetter: true, defaultWeight: 4 },
-  { id: 'power', label: 'Power consumption', higherIsBetter: false, defaultWeight: 3 },
-  { id: 'cost', label: 'Unit cost', higherIsBetter: false, defaultWeight: 4 },
+  { id: 'power', label: 'Power (5 = lowest consumption)', higherIsBetter: true, defaultWeight: 3 },
+  { id: 'cost', label: 'Unit cost (5 = most affordable)', higherIsBetter: true, defaultWeight: 4 },
   { id: 'service', label: 'Serviceability', higherIsBetter: true, defaultWeight: 3 },
-  { id: 'complexity', label: 'Design complexity', higherIsBetter: false, defaultWeight: 2 },
+  { id: 'complexity', label: 'Complexity (5 = simplest)', higherIsBetter: true, defaultWeight: 2 },
 ]
 
 export const DESIGN_OPTIONS: MatrixOption[] = [
@@ -135,13 +135,13 @@ const BEGINNER: ModeContent = {
       title: 'STEP-BY-STEP CALCULATION — Reading the trade',
       provenance: 'insight',
       body: [
-        'Three candidate architectures scored on six parameters, with power, cost and complexity inverted.',
+        'Three candidate architectures scored on six parameters. Every score runs in the “good” direction, so 5 is always best: power is entered as low consumption, cost as affordability, complexity as simplicity.',
       ],
       bullets: [
-        'Single general-purpose channel: accuracy 2, environment 3, power 4 (→2 good), cost 5 (→1 good), serviceability 4, complexity 5 (→1 good).',
-        'Single precision channel, derated: accuracy 4, environment 4, power 4 (→2), cost 3 (→3), serviceability 4, complexity 4 (→2).',
-        'Dual redundant precision: accuracy 5, environment 5, power 2 (→4), cost 1 (→5), serviceability 2, complexity 1 (→5).',
-        'With the default weights the precision single channel leads; the redundant architecture wins only when accuracy and environment are weighted far above cost and complexity.',
+        'Single general-purpose channel: accuracy 2, environment 3, power 4, cost 5 (cheapest), serviceability 4, complexity 5 (simplest).',
+        'Single precision channel, derated: accuracy 4, environment 4, power 4, cost 3, serviceability 4, complexity 4.',
+        'Dual redundant precision: accuracy 5, environment 5, power 2 (hungriest), cost 1 (dearest), serviceability 2, complexity 1 (most complex).',
+        'With the default weights the precision single channel leads by only 0.19 points — inside the noise of subjective scoring, so the honest record is “precision, with the general-purpose channel not excluded”. The redundant architecture wins only when accuracy and environment are weighted far above cost and complexity.',
         'The recorded trade: “we chose the single derated precision channel; it costs us the redundancy margin, because the unit-cost constraint is binding at this volume”.',
       ],
     },

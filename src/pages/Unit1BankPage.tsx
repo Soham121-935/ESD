@@ -1,8 +1,11 @@
+import { useNavigate } from 'react-router-dom'
 import { UNIT1, UNIT1_QUESTIONS } from '../data/unit1/unit1'
+import { FINAL_TEST_QUESTIONS, FINAL_TEST_TOTAL_MARKS } from '../data/unit1/finalTest'
 import { QuestionBank } from '../components/QuestionBank'
 import { Callout } from '../components/Provenance'
 
 export function Unit1BankPage() {
+  const navigate = useNavigate()
   const live = UNIT1.topics.filter((t) => t.status === 'live')
   const byTopic = live.map((t) => ({
     topic: t,
@@ -30,8 +33,17 @@ export function Unit1BankPage() {
 
       <Callout>
         <strong>Bank coverage.</strong> {UNIT1_QUESTIONS.length} questions across{' '}
-        {live.length} of {UNIT1.topics.length} topics. The remaining Unit 1 topics will add their
-        questions here as they are built. The full Unit 1 target is 250+ questions.
+        {live.length} of {UNIT1.topics.length} topics. The full Unit 1 target is 250+ questions.
+      </Callout>
+
+      <Callout>
+        <strong>Ready for a full paper?</strong> The Unit 1 final test is a separate{' '}
+        {FINAL_TEST_QUESTIONS.length}-question, {FINAL_TEST_TOTAL_MARKS}-mark paper in eight
+        sections (A Fundamentals … H Long answers), with a marking scheme and a model answer for
+        every question and a weak-area report at the end.{' '}
+        <button className="btn sm primary" onClick={() => navigate('/u1/test')}>
+          Open the final test ▸
+        </button>
       </Callout>
 
       <QuestionBank questions={UNIT1_QUESTIONS} />

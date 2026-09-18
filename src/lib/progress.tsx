@@ -77,6 +77,8 @@ interface ProgressContextValue {
   recordDesign: (id: string, scorePct: number) => void
   recordDebug: (id: string) => void
   recordViva: (id: string) => void
+  /** Remove the recorded attempt for the given question ids (used to re-sit a paper). */
+  clearAttempts: (questionIds: string[]) => void
   reset: () => void
   /** Percentage per skill for a topic. */
   skillAccuracy: (topicId: string) => Partial<Record<SkillDimension, number>>
@@ -140,6 +142,11 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setState((s) => (s.vivaDone.includes(id) ? s : { ...s, vivaDone: [...s.vivaDone, id] }))
   }, [])
 
+  const clearAttempts = useCallback((questionIds: string[]) => {
+    const drop = new Set(questionIds)
+    setState((s) => ({ ...s, attempts: s.attempts.filter((a) => !drop.has(a.questionId)) }))
+  }, [])
+
   const reset = useCallback(() => setState({ ...emptyState }), [])
 
   const skillAccuracy = useCallback(
@@ -193,6 +200,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       recordDesign,
       recordDebug,
       recordViva,
+      clearAttempts,
       reset,
       skillAccuracy,
       unitSkillAccuracy,
@@ -206,6 +214,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       recordDesign,
       recordDebug,
       recordViva,
+      clearAttempts,
       reset,
       skillAccuracy,
       unitSkillAccuracy,

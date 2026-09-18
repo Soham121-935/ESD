@@ -17,6 +17,7 @@ import { Topic4Page } from './pages/Topic4Page'
 import { Topic5Page } from './pages/Topic5Page'
 import { Topic6Page } from './pages/Topic6Page'
 import { Unit1BankPage } from './pages/Unit1BankPage'
+import { Unit1TestPage } from './pages/Unit1TestPage'
 import { PlannedTopicPage } from './pages/PlannedTopicPage'
 import { LearnFlow } from './components/LearnFlow'
 import { InteractiveCircuit } from './components/InteractiveCircuit'
@@ -51,6 +52,11 @@ import {
   TOPIC3_MODES,
   TOPIC3_QUESTIONS,
 } from './data/unit1/topic3'
+import {
+  FINAL_TEST_QUESTIONS,
+  FINAL_TEST_TOTAL_MARKS,
+  UNIT1_FINAL_TEST,
+} from './data/unit1/finalTest'
 import {
   DESIGN_OPTIONS,
   DESIGN_PARAMS,
@@ -123,6 +129,7 @@ render('Topic4Page', wrap(<Topic4Page />))
 render('Topic5Page', wrap(<Topic5Page />))
 render('Topic6Page', wrap(<Topic6Page />))
 render('Unit1BankPage', wrap(<Unit1BankPage />))
+render('Unit1TestPage', wrap(<Unit1TestPage />))
 for (const t of UNIT1.topics.filter((x) => x.id !== 'u1t1')) {
   render(
     `PlannedTopicPage ${t.id}`,
@@ -334,5 +341,86 @@ results.push(
     : `FAIL inconsistent logic levels: ${badFamily.map((f) => f.id).join(', ')}`,
 )
 if (badFamily.length) process.exitCode = 1
+
+
+/* ---------------- Unit 1 final test ---------------- */
+
+const ftSections = UNIT1_FINAL_TEST.length
+results.push(
+  ftSections === 8 ? 'OK   final test has 8 sections' : `FAIL final test has ${ftSections} sections`,
+)
+if (ftSections !== 8) process.exitCode = 1
+
+const ftLetters = UNIT1_FINAL_TEST.map((s) => s.letter).join('')
+results.push(
+  ftLetters === 'ABCDEFGH'
+    ? 'OK   final test sections are labelled A-H'
+    : `FAIL final test letters are ${ftLetters}`,
+)
+if (ftLetters !== 'ABCDEFGH') process.exitCode = 1
+
+results.push(
+  FINAL_TEST_QUESTIONS.length === 35 && FINAL_TEST_TOTAL_MARKS === 160
+    ? `OK   final test paper is ${FINAL_TEST_QUESTIONS.length} questions / ${FINAL_TEST_TOTAL_MARKS} marks`
+    : `FAIL final test paper is ${FINAL_TEST_QUESTIONS.length} questions / ${FINAL_TEST_TOTAL_MARKS} marks (expected 35 / 160)`,
+)
+if (FINAL_TEST_QUESTIONS.length !== 35 || FINAL_TEST_TOTAL_MARKS !== 160) process.exitCode = 1
+
+const ftIds = FINAL_TEST_QUESTIONS.map((q) => q.id)
+results.push(
+  new Set(ftIds).size === ftIds.length ? 'OK   final test question ids unique' : 'FAIL duplicate final test question ids',
+)
+if (new Set(ftIds).size !== ftIds.length) process.exitCode = 1
+
+const ftNoScheme = FINAL_TEST_QUESTIONS.filter((q) => !q.marking || q.marking.length === 0)
+results.push(
+  ftNoScheme.length === 0
+    ? 'OK   every final test question carries a marking scheme'
+    : `FAIL final test questions without a marking scheme: ${ftNoScheme.map((q) => q.id).join(', ')}`,
+)
+if (ftNoScheme.length) process.exitCode = 1
+
+const ftBadMarks = UNIT1_FINAL_TEST.flatMap((sec) =>
+  sec.questions.filter((q) => q.marks !== sec.marksEach).map((q) => q.id),
+)
+results.push(
+  ftBadMarks.length === 0
+    ? 'OK   every final test question matches its section mark value'
+    : `FAIL final test mark mismatch: ${ftBadMarks.join(', ')}`,
+)
+if (ftBadMarks.length) process.exitCode = 1
+
+const ftOrphans = FINAL_TEST_QUESTIONS.filter((q) => !knownTopicIds.has(q.topicId))
+results.push(
+  ftOrphans.length === 0
+    ? 'OK   every final test question maps to a known topic'
+    : `FAIL final test questions with unknown topic: ${ftOrphans.map((q) => q.id).join(', ')}`,
+)
+if (ftOrphans.length) process.exitCode = 1
+
+const ftTopics = new Set(FINAL_TEST_QUESTIONS.map((q) => q.topicId))
+results.push(
+  ftTopics.size === 6
+    ? 'OK   final test covers all six Unit 1 topics'
+    : `FAIL final test covers only ${ftTopics.size} topics`,
+)
+if (ftTopics.size !== 6) process.exitCode = 1
+
+const ftThin = FINAL_TEST_QUESTIONS.filter((q) => q.solution.length < 3 || q.hint.length < 10)
+results.push(
+  ftThin.length === 0
+    ? 'OK   every final test question has a hint and a full worked solution'
+    : `FAIL thin final test questions: ${ftThin.map((q) => q.id).join(', ')}`,
+)
+if (ftThin.length) process.exitCode = 1
+
+/* matrix scoring direction — a raw figure must never be rewarded for being large */
+const invertedMatrixParams = [...PM_PARAMS, ...DESIGN_PARAMS].filter((p) => !p.higherIsBetter)
+results.push(
+  invertedMatrixParams.length === 0
+    ? 'OK   every matrix parameter is scored in the "5 is best" direction'
+    : `FAIL matrix parameters still marked for inversion: ${invertedMatrixParams.map((p) => p.id).join(', ')}`,
+)
+if (invertedMatrixParams.length) process.exitCode = 1
 
 console.log(results.join('\n'))

@@ -30,8 +30,14 @@ export const PM_PARAMS: MatrixParam[] = [
   { id: 'temp', label: 'Operating temp. range', higherIsBetter: true, defaultWeight: 5, provenance: 'source' },
   { id: 'reliability', label: 'Reliability', higherIsBetter: true, defaultWeight: 4, provenance: 'source' },
   { id: 'life', label: 'Life', higherIsBetter: true, defaultWeight: 3, provenance: 'source' },
-  { id: 'maintenance', label: 'Maintenance burden', higherIsBetter: false, defaultWeight: 3, provenance: 'source' },
-  { id: 'cost', label: 'Cost', higherIsBetter: false, defaultWeight: 4, provenance: 'source' },
+  {
+    id: 'maintenance',
+    label: 'Maintenance (5 = lowest burden)',
+    higherIsBetter: true,
+    defaultWeight: 3,
+    provenance: 'source',
+  },
+  { id: 'cost', label: 'Cost (5 = most affordable)', higherIsBetter: true, defaultWeight: 4, provenance: 'source' },
   { id: 'ergonomics', label: 'Ergonomics', higherIsBetter: true, defaultWeight: 2, provenance: 'source' },
 ]
 
@@ -135,7 +141,7 @@ const BEGINNER: ModeContent = {
       title: 'ENGINEERING DIAGRAM — Weighted matrix builder',
       provenance: 'insight',
       body: [
-        'Move the weights and watch the ranking change. Notice how the military-grade unit wins when reliability is weighted heavily and loses the moment cost is weighted heavily.',
+        'Move the weights and watch the ranking change. Notice how the military-grade unit wins when reliability and temperature range are weighted heavily, and how the gap closes as the cost weight rises — and notice too that even at maximum cost weight it only just stays ahead, because a 1–5 affordability score cannot express a hard budget ceiling. That is exactly what a matrix is for: it shows you that cost is the whole argument.',
       ],
     },
     {
@@ -143,14 +149,14 @@ const BEGINNER: ModeContent = {
       title: 'STEP-BY-STEP CALCULATION — Scoring the three grades',
       provenance: 'insight',
       body: [
-        'Six parameters from the supplied table, scored 1–5, with cost and maintenance inverted so that a smaller value scores better.',
+        'Six parameters from the supplied table, scored 1–5 in the “good” direction, so that 5 is always the best score. Cost and maintenance are therefore entered as affordability and as low burden — never as the raw cost or the raw hours.',
       ],
       bullets: [
-        'Consumer: temp 2, reliability 2, life 2, maintenance burden 4 (→2 good), cost 5 (→1 good), ergonomics 4.',
-        'Industry: temp 4, reliability 4, life 4, maintenance burden 3 (→3 good), cost 3 (→3 good), ergonomics 3.',
-        'Military: temp 5, reliability 5, life 5, maintenance burden 5 (→1 good), cost 1 (→5 good), ergonomics 2.',
-        'With the default weights the industry unit leads, because it is the only option that is not weak anywhere.',
-        'Raise the cost weight and the consumer unit competes; drop it and the military unit wins. The ranking is a function of the requirement — which is the point.',
+        'Consumer: temp 2, reliability 2, life 2, maintenance 4, cost 5 (most affordable), ergonomics 4.',
+        'Industry: temp 4, reliability 4, life 4, maintenance 3, cost 3, ergonomics 3.',
+        'Military: temp 5, reliability 5, life 5, maintenance 5 (lowest burden), cost 1 (very high cost), ergonomics 2.',
+        'With the default weights the military unit leads: the default weighting is dominated by temperature range, reliability and life, and the military column wins all three.',
+        'Push the cost weight up and the gap narrows; drop the ruggedness weights towards zero and the industry or consumer unit takes over. The ranking is a function of the requirement — which is the point.',
       ],
     },
     {
@@ -321,7 +327,7 @@ const EXAM: ModeContent = {
         'Columns: the candidate systems — Consumer, Industry and Military products.',
         'Cells: the score or entry for each combination.',
         'Additions required for decision-making: a direction for each parameter (higher or lower is better) and a weight expressing its importance.',
-        'Weighted score = Σ(good-score × weight) / Σ(weight), where a “lower is better” parameter is inverted before weighting.',
+        'Weighted score = Σ(good-score × weight) / Σ(weight), where every score is first converted so that 5 is the best possible value — a “lower is better” parameter such as cost therefore appears as affordability, or is inverted with good-score = 6 − raw.',
       ],
     },
     {
@@ -335,7 +341,7 @@ const EXAM: ModeContent = {
         'Consumer-grade: temp 2, reliability 2, life 2, maintenance burden 4, cost 5, ergonomics 4.',
         'Industry-grade: temp 4, reliability 4, life 4, maintenance burden 3, cost 3, ergonomics 3.',
         'Military-grade: temp 5, reliability 5, life 5, maintenance burden 5, cost 1, ergonomics 2.',
-        'Conclusion: the industry grade leads under balanced weights because it has no weak parameter; the military grade wins only if cost is weighted very low.',
+        'Conclusion: the military grade leads under balanced weights, because it wins temperature range, reliability, life and maintenance and loses only on cost; the industry grade overtakes it only when the ruggedness weights are driven down and cost is weighted near its maximum. State whichever result your own weights produce, and state the weight that would flip it — the sensitivity is the answer, not the name.',
       ],
     },
     {
@@ -440,10 +446,10 @@ export const PM_DESIGN: DesignChallengeSpec = {
       hints: [
         'Hint 1 — Most parameters are better when larger. Which are better when smaller?',
         'Hint 2 — You want the cheapest product and the least maintenance.',
-        'Hint 3 — Cost and maintenance. Both must be inverted before weighting, or the matrix will reward the most expensive option.',
+        'Hint 3 — Cost and maintenance. In this table they are already scored in the “good” direction (5 = most affordable, 5 = lowest burden). If you enter raw datasheet figures instead, you must invert them first.',
       ],
       rationale:
-        'Cost and maintenance burden. If they are not inverted before weighting, the matrix awards the highest scores to the most expensive and the most maintenance-hungry option — a classic and entirely avoidable error.',
+        'Cost and maintenance burden. Both are lower-is-better parameters, so if you score the raw figure — rupees, or maintenance hours — the matrix awards its highest scores to the most expensive and the most maintenance-hungry option. Either invert the raw figure (good-score = 6 − raw on a 1–5 scale) or, as this table does, score affordability and low burden directly. A classic and entirely avoidable error.',
     },
     {
       id: 'fragile',
@@ -467,16 +473,17 @@ export const PM_DESIGN: DesignChallengeSpec = {
   solution: [
     { label: 'Requirement', content: '200 outdoor loggers, −15 °C to +55 °C, glove operation, 8-year life, swap-not-repair, tight unit cost.' },
     { label: 'Screening', content: 'Temperature window eliminates Consumer (0 to 70 °C). Industry and Military both contain the window.' },
-    { label: 'Parameters', content: 'Operating temp. range, reliability, life, maintenance burden (inverted), cost (inverted), ergonomics — all from the supplied vocabulary.' },
+    { label: 'Parameters', content: 'Operating temp. range, reliability, life, maintenance (scored so 5 = lowest burden), cost (scored so 5 = most affordable), ergonomics — all from the supplied vocabulary.' },
     { label: 'Weighting', content: 'Cost highest, then reliability, maintenance and life, then temperature, then ergonomics. Each weight justified by a line in the requirement.' },
-    { label: 'Result', content: 'Industry leads. It is the only option with no weak parameter once cost is weighted heavily.' },
+    { label: 'Result', content: 'Industry and Military finish inside 0.15 points of each other — inside the noise of any 1–5 scoring. The matrix has narrowed the field to two; it has not decided between them.' },
+    { label: 'Tie-break', content: 'The tie is broken by the unit-cost ceiling, which is a hard constraint and not a score. Industry meets it; Military does not. Record the tie honestly and then apply the constraint — a matrix ranks, it does not enforce a budget.' },
     { label: 'Sensitivity', content: 'The ranking is stable while the cost weight stays at 3 or above. If the ambient at any site falls below −25 °C the screen removes Industry entirely and the decision collapses.' },
-    { label: 'Possible failure modes', content: 'Parameters chosen to favour a preferred option; a pass/fail requirement scored instead of screened; cost not inverted; a tie reported as a ranking.' },
+    { label: 'Possible failure modes', content: 'Parameters chosen to favour a preferred option; a pass/fail requirement scored instead of screened; cost or maintenance entered as a raw figure so the matrix rewards the most expensive option; a tie reported as a ranking.' },
     { label: 'Alternative', content: 'If the cost ceiling cannot be met by Industry, reduce the environment instead of the class: a heated or insulated enclosure keeps a cheaper unit inside its window, at the price of a new failure mode (the heater).' },
   ],
   failureModes: [
     'Scoring an option that has already failed a hard requirement.',
-    'Forgetting to invert cost and maintenance before weighting.',
+    'Entering raw cost or raw maintenance figures without converting them to the “5 = best” direction, so the matrix rewards the most expensive option.',
     'Choosing parameters that match the strengths of the preferred option.',
     'Reporting a ranking without the sensitivity that produced it.',
     'Presenting a 0.2-point difference as a decision.',
@@ -614,7 +621,7 @@ export const TOPIC5_QUESTIONS: Question[] = [
       },
       {
         label: 'Method (Engineering Insight)',
-        content: 'Invert before weighting: good-score = 6 − raw score on a 1–5 scale, then weight as usual.',
+        content: 'Convert every parameter to a “5 is best” score before weighting. If you hold the raw figure, invert it: good-score = 6 − raw score on a 1–5 scale. If you score affordability and low burden directly, no inversion is needed — but never mix the two conventions in one table.',
       },
     ],
     engineeringExplanation: 'A matrix that rewards the highest cost is not a subtle error — it is a visible one, and it destroys the credibility of the whole analysis.',

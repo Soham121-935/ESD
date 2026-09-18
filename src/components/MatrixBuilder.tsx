@@ -124,9 +124,10 @@ export function MatrixBuilder({ title, params, options, note }: Props) {
       </Callout>
 
       <p className="small faint">
-        Scores are on a 1–5 scale. Parameters marked ↓ are inverted before weighting, so a large
-        cost or a large power figure never improves a score. The weighting is the requirement — move
-        it and the ranking is allowed to change.
+        Scores are on a 1–5 scale and every score runs in the “good” direction, so 5 is always the
+        best value. A parameter marked ↓ is one whose raw figure runs the other way (cost in rupees,
+        power in mW): the tool inverts it before weighting, so a large raw figure never improves a
+        score. The weighting is the requirement — move it and the ranking is allowed to change.
       </p>
     </div>
   )

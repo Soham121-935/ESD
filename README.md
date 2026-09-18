@@ -13,7 +13,7 @@ npm run dev        # dev server on 0.0.0.0:5173
 npm run build      # production build
 npm run typecheck  # tsc --noEmit
 npm run smoke      # SSR render of every page/component + data integrity checks
-npm run mounttest  # boots the real app in jsdom and drives the UI (85 assertions)
+npm run mounttest  # boots the real app in jsdom and drives the UI (88 assertions)
 npm test           # all three
 ```
 
@@ -50,7 +50,27 @@ changed; where the source does not support a detail, the gap is stated rather th
 | 5 | System Performance Matrix | complete | 25 |
 | 6 | Design Matrix | complete | 25 |
 
-**Unit 1 total: 252 questions.**
+**Unit 1 total: 252 questions**, plus a separate **35-question / 160-mark final test paper**.
+
+### Unit 1 final test (Sections A–H)
+
+A full-length paper at `/u1/test`, covering all six topics:
+
+| Section | Content | Marks each | Questions |
+| --- | --- | --- | --- |
+| A | Fundamentals — definitions you must own | 2 | 10 |
+| B | Numericals — one concept, one calculation, units shown | 4 | 4 |
+| C | Circuit & system analysis with a verification step | 8 | 3 |
+| D | Circuit design with an error budget | 8 | 3 |
+| E | Component & class selection with justification | 4 | 3 |
+| F | Troubleshooting — symptom → measurement → fix → verify | 4 | 4 |
+| G | What-if analysis — how much margin does a change consume? | 4 | 4 |
+| H | Long answers — the supplied assignment questions | 8 | 4 |
+
+Every question carries a hint, a worked model answer, a published marking scheme and an
+engineering explanation. The page has a countdown timer, self-marking (full / half / zero) that is
+stored locally, and a result screen that reports accuracy by section, by topic and by skill, names
+the weak areas, and links straight back to the topic that needs revision.
 
 Topic 1 — three study modes (Beginner / Intermediate / Exam-8-mark), interactive system block
 diagram, the supplied comparison matrix, a numerical solver with a temperature-margin what-if
@@ -74,9 +94,11 @@ figures and a current check, with the source's interfacing rules driving the ver
 and noise-margin problems, a mixed-family board design challenge, and two fault cases (floating
 inputs, the TTL→CMOS HIGH-state failure).
 
-Topics 5 and 6 — a weighted matrix builder with explicit parameter direction (cost, power and
-complexity are lower-is-better), used for the performance matrix and the design matrix, plus review
-fault sections that teach you to audit someone else's matrix.
+Topics 5 and 6 — a weighted matrix builder used for the performance matrix and the design matrix,
+plus review fault sections that teach you to audit someone else's matrix. Every score in these
+tables runs in the "5 is best" direction, so cost is entered as affordability and complexity as
+simplicity; the builder still supports a ↓ (lower-is-better) direction for datasheet-style inputs,
+and inverts those before weighting.
 
 ## Architecture
 
@@ -87,8 +109,9 @@ src/
   lib/utils.ts             answer normalisation and numeric parsing
   data/unit1/unit1.ts      Unit 1 meta (six topics)
   data/unit1/topic1.ts     Topic 1 content, questions, problems, design + debug cases
+  data/unit1/finalTest.ts  the Unit 1 final test paper (Sections A–H)
   components/              reusable teaching components
-  pages/                   Topic1Page, PlannedTopicPage
+  pages/                   Topic pages, Unit1BankPage, Unit1TestPage, PlannedTopicPage
 ```
 
 Reusable components: `LearnFlow`, `ConceptCard`, `WhyButton`, `StepBuilder`, `InteractiveCircuit`,

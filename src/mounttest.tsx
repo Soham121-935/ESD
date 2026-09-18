@@ -391,6 +391,51 @@ async function main() {
     )
   })
 
+
+  /* --- unit 1 final test --- */
+  check('final test page opens with sections A-H', () => {
+    click(byText('.topic-link', 'Final Test'), 'final test link')
+    const txt = container.textContent ?? ''
+    assert(txt.includes('Unit 1 — Final Test'), 'final test heading missing')
+    const tabs = qa('.tabs button')
+    assert(tabs.length === 9, `expected 8 section tabs plus a result tab, got ${tabs.length}`)
+    const letters = tabs.slice(0, 8).map((t) => (t.textContent ?? '').trim().charAt(0)).join('')
+    assert(letters === 'ABCDEFGH', `expected section tabs A-H, got ${letters}`)
+    const cards = qa('.qcard')
+    assert(cards.length === 10, `expected 10 questions in section A, got ${cards.length}`)
+    assert(txt.includes('160 marks'), 'total marks missing')
+  })
+
+  check('final test reveals a model answer and records self-marked marks', () => {
+    click(byText('.qcard .btn', 'Model answer'), 'model answer button')
+    let txt = container.textContent ?? ''
+    assert(txt.includes('Definition (source)'), 'model answer did not render solution steps')
+    assert(txt.includes('Engineering explanation'), 'engineering explanation missing')
+
+    click(byText('.qcard .btn', 'Marking scheme'), 'marking scheme button')
+    txt = container.textContent ?? ''
+    assert(txt.includes('Marking scheme — 2 marks'), 'marking scheme did not render')
+
+    click(byText('.qcard .btn', 'Full (2)'), 'full marks button')
+    const firstReadout = qa('.readout')[0]
+    assert(firstReadout, 'no score readout on the final test page')
+    assert(
+      (firstReadout.textContent ?? '').includes('2'),
+      `expected the score readout to show 2, got "${firstReadout.textContent}"`,
+    )
+  })
+
+  check('final test result tab reports scores by section, topic and skill', () => {
+    click(byText('.tabs button', 'Result'), 'result tab')
+    const txt = container.textContent ?? ''
+    assert(txt.includes('By section'), 'by-section report missing')
+    assert(txt.includes('By topic'), 'by-topic report missing')
+    assert(txt.includes('By skill'), 'by-skill report missing')
+    assert(txt.includes('Weak areas'), 'weak-area report missing')
+    const meters = qa('.meter-row')
+    assert(meters.length >= 15, `expected section, topic and skill meters, got ${meters.length}`)
+  })
+
   check('localStorage persisted the progress', () => {
     const raw = dom.window.localStorage.getItem('esd-learning-lab:v1')
     assert(raw, 'nothing written to localStorage')
