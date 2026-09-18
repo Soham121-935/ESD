@@ -13,7 +13,7 @@ npm run dev        # dev server on 0.0.0.0:5173
 npm run build      # production build
 npm run typecheck  # tsc --noEmit
 npm run smoke      # SSR render of every page/component + data integrity checks
-npm run mounttest  # boots the real app in jsdom and drives the UI (25 assertions)
+npm run mounttest  # boots the real app in jsdom and drives the UI (85 assertions)
 npm test           # all three
 ```
 
@@ -39,8 +39,18 @@ changed; where the source does not support a detail, the gap is stated rather th
 
 ## Current state
 
-**Unit 1 → Topic 1 — Electronic System Classification: complete.**
-**Unit 1 → Topic 2 — System Reliability: complete.**
+**Unit 1 — all six topics are built.**
+
+| # | Topic | Status | Questions |
+| --- | --- | --- | --- |
+| 1 | Electronic System Classification | complete | 40 |
+| 2 | System Reliability | complete | 65 |
+| 3 | Op-Amp Characteristics | complete | 52 |
+| 4 | TTL and CMOS | complete | 45 |
+| 5 | System Performance Matrix | complete | 25 |
+| 6 | Design Matrix | complete | 25 |
+
+**Unit 1 total: 252 questions.**
 
 Topic 1 — three study modes (Beginner / Intermediate / Exam-8-mark), interactive system block
 diagram, the supplied comparison matrix, a numerical solver with a temperature-margin what-if
@@ -51,11 +61,22 @@ analysis.
 Topic 2 — interactive reliability explorer for R(t) = e^(−λt) including the source's own anchor
 point (t = m → R = 37%), an interactive bathtub curve with per-region causes and improvement
 actions at component and system level, a stress-severity toggle (source Graph A / Graph B), four
-worked numerical problems, a reliability design challenge, two fault cases, and a 65-question bank.
-Combined Unit 1 bank: 105 questions.
+worked numerical problems, a reliability design challenge and two fault cases.
 
-Topics 3–6 are routed but display a "not built yet" placeholder. They will be built topic by topic
-in subsequent passes.
+Topic 3 — the supplied inverting-amplifier problem (R1 = 10 kΩ, Rf = 20 kΩ, Vi = 3 V, 2 kΩ load,
+IQ = 0.5 mA) as an interactive lab and a step-by-step solver, with the supply rails declared as an
+explicit assumption because the assignment does not state them. Plus VOS / IB / IOS / drift / CMRR
+budgets from the supplied device tables, six worked problems, a shunt-monitor design challenge and
+two fault cases (saturation, missing compensation resistor).
+
+Topic 4 — logic interface analyser: pick a driver and a receiver, read VNH and VNL, both fan-out
+figures and a current check, with the source's interfacing rules driving the verdict. Plus fan-out
+and noise-margin problems, a mixed-family board design challenge, and two fault cases (floating
+inputs, the TTL→CMOS HIGH-state failure).
+
+Topics 5 and 6 — a weighted matrix builder with explicit parameter direction (cost, power and
+complexity are lower-is-better), used for the performance matrix and the design matrix, plus review
+fault sections that teach you to audit someone else's matrix.
 
 ## Architecture
 

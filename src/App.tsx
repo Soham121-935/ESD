@@ -3,6 +3,10 @@ import { ProgressProvider, useProgress } from './lib/progress'
 import { UNIT1, TOPIC_SECTION_IDS } from './data/unit1/unit1'
 import { Topic1Page } from './pages/Topic1Page'
 import { Topic2Page } from './pages/Topic2Page'
+import { Topic3Page } from './pages/Topic3Page'
+import { Topic4Page } from './pages/Topic4Page'
+import { Topic5Page } from './pages/Topic5Page'
+import { Topic6Page } from './pages/Topic6Page'
 import { PlannedTopicPage } from './pages/PlannedTopicPage'
 import { Unit1BankPage } from './pages/Unit1BankPage'
 import { TopicProgressDot } from './components/ProgressTracker'
@@ -150,6 +154,10 @@ function TopicRouter() {
   if (!topic) return <Navigate to="/u1/u1t1" replace />
   if (topic.id === 'u1t1') return <Topic1Page />
   if (topic.id === 'u1t2') return <Topic2Page />
+  if (topic.id === 'u1t3') return <Topic3Page />
+  if (topic.id === 'u1t4') return <Topic4Page />
+  if (topic.id === 'u1t5') return <Topic5Page />
+  if (topic.id === 'u1t6') return <Topic6Page />
   return <PlannedTopicPage />
 }
 

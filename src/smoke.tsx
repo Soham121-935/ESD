@@ -12,6 +12,10 @@ import { MemoryRouter } from 'react-router-dom'
 import { ProgressProvider } from './lib/progress'
 import { Topic1Page } from './pages/Topic1Page'
 import { Topic2Page } from './pages/Topic2Page'
+import { Topic3Page } from './pages/Topic3Page'
+import { Topic4Page } from './pages/Topic4Page'
+import { Topic5Page } from './pages/Topic5Page'
+import { Topic6Page } from './pages/Topic6Page'
 import { Unit1BankPage } from './pages/Unit1BankPage'
 import { PlannedTopicPage } from './pages/PlannedTopicPage'
 import { LearnFlow } from './components/LearnFlow'
@@ -29,6 +33,40 @@ import { StepBuilder } from './components/StepBuilder'
 import { WhyButton } from './components/WhyButton'
 import { ConceptCard } from './components/ConceptCard'
 import { ReliabilityExplorer } from './components/ReliabilityExplorer'
+import { OpAmpInvertingLab } from './components/OpAmpInvertingLab'
+import { LogicInterfaceLab } from './components/LogicInterfaceLab'
+import { MatrixBuilder } from './components/MatrixBuilder'
+import {
+  LOGIC_DESIGN,
+  LOGIC_PROBLEMS,
+  SOURCE_NOTE4,
+  TOPIC4_MODES,
+  TOPIC4_QUESTIONS,
+} from './data/unit1/topic4'
+import { LOGIC_FAMILIES } from './components/LogicInterfaceLab'
+import {
+  OPAMP_DESIGN,
+  OPAMP_PROBLEMS,
+  OPAMP_SPEC_MATRIX,
+  TOPIC3_MODES,
+  TOPIC3_QUESTIONS,
+} from './data/unit1/topic3'
+import {
+  DESIGN_OPTIONS,
+  DESIGN_PARAMS,
+  DM_DESIGN,
+  DM_REVIEW_FAULTS,
+  TOPIC6_MODES,
+  TOPIC6_QUESTIONS,
+} from './data/unit1/topic6'
+import {
+  PM_DESIGN,
+  PM_OPTIONS,
+  PM_PARAMS,
+  PM_REVIEW_FAULTS,
+  TOPIC5_MODES,
+  TOPIC5_QUESTIONS,
+} from './data/unit1/topic5'
 import { BathtubCurve } from './components/BathtubCurve'
 import {
   BATHTUB_REGIONS,
@@ -80,6 +118,10 @@ const wrap = (node: React.ReactNode) => (
 /* Pages */
 render('Topic1Page', wrap(<Topic1Page />))
 render('Topic2Page', wrap(<Topic2Page />))
+render('Topic3Page', wrap(<Topic3Page />))
+render('Topic4Page', wrap(<Topic4Page />))
+render('Topic5Page', wrap(<Topic5Page />))
+render('Topic6Page', wrap(<Topic6Page />))
 render('Unit1BankPage', wrap(<Unit1BankPage />))
 for (const t of UNIT1.topics.filter((x) => x.id !== 'u1t1')) {
   render(
@@ -100,6 +142,39 @@ for (const m of ['beginner', 'intermediate', 'exam'] as const) {
   render(
     `LearnFlow T2 ${m}`,
     <LearnFlow content={TOPIC2_MODES[m]} diagram={<ReliabilityExplorer />} />,
+  )
+}
+
+/* Topic 3 components */
+render('OpAmpInvertingLab', <OpAmpInvertingLab />)
+render('OpAmpSpecMatrix', <PerformanceMatrix spec={OPAMP_SPEC_MATRIX} />)
+OPAMP_PROBLEMS.forEach((p) => render(`OpAmp ${p.id}`, wrap(<NumericalSolver problem={p} topicId="u1t3" />)))
+render('OpAmpDesign', wrap(<DesignChallenge spec={OPAMP_DESIGN} topicId="u1t3" />))
+for (const m of ['beginner', 'intermediate', 'exam'] as const) {
+  render(`LearnFlow T3 ${m}`, <LearnFlow content={TOPIC3_MODES[m]} diagram={<OpAmpInvertingLab />} />)
+}
+
+/* Topic 4 components */
+render('LogicInterfaceLab', <LogicInterfaceLab />)
+LOGIC_PROBLEMS.forEach((p) => render(`Logic ${p.id}`, wrap(<NumericalSolver problem={p} topicId="u1t4" />)))
+render('LogicDesign', wrap(<DesignChallenge spec={LOGIC_DESIGN} topicId="u1t4" />))
+for (const m of ['beginner', 'intermediate', 'exam'] as const) {
+  render(`LearnFlow T4 ${m}`, <LearnFlow content={TOPIC4_MODES[m]} diagram={<LogicInterfaceLab />} />)
+}
+
+/* Topic 5 and 6 — matrix builder */
+render('MatrixBuilder T5', <MatrixBuilder title="t" params={PM_PARAMS} options={PM_OPTIONS} />)
+render('MatrixBuilder T6', <MatrixBuilder title="t" params={DESIGN_PARAMS} options={DESIGN_OPTIONS} />)
+render('PMDesign', wrap(<DesignChallenge spec={PM_DESIGN} topicId="u1t5" />))
+render('DMDesign', wrap(<DesignChallenge spec={DM_DESIGN} topicId="u1t6" />))
+for (const m of ['beginner', 'intermediate', 'exam'] as const) {
+  render(
+    `LearnFlow T5 ${m}`,
+    <LearnFlow content={TOPIC5_MODES[m]} diagram={<MatrixBuilder title="t" params={PM_PARAMS} options={PM_OPTIONS} />} />,
+  )
+  render(
+    `LearnFlow T6 ${m}`,
+    <LearnFlow content={TOPIC6_MODES[m]} diagram={<MatrixBuilder title="t" params={DESIGN_PARAMS} options={DESIGN_OPTIONS} />} />,
   )
 }
 
@@ -168,7 +243,14 @@ render(
 )
 
 /* Data integrity checks */
-const allQuestions = [...TOPIC1_QUESTIONS, ...TOPIC2_QUESTIONS]
+const allQuestions = [
+  ...TOPIC1_QUESTIONS,
+  ...TOPIC2_QUESTIONS,
+  ...TOPIC3_QUESTIONS,
+  ...TOPIC4_QUESTIONS,
+  ...TOPIC5_QUESTIONS,
+  ...TOPIC6_QUESTIONS,
+]
 const ids = allQuestions.map((q) => q.id)
 const dupes = ids.filter((id, i) => ids.indexOf(id) !== i)
 results.push(
@@ -188,7 +270,12 @@ results.push(
 )
 if (badMcq.length) process.exitCode = 1
 
-const allProblems = [TEMP_RANGE_PROBLEM, ...RELIABILITY_PROBLEMS]
+const allProblems = [
+  TEMP_RANGE_PROBLEM,
+  ...RELIABILITY_PROBLEMS,
+  ...OPAMP_PROBLEMS,
+  ...LOGIC_PROBLEMS,
+]
 for (const pr of allProblems) {
   const stepIds = pr.steps.flatMap((s) => s.entries.map((e) => e.id))
   const ok = new Set(stepIds).size === stepIds.length
@@ -196,8 +283,56 @@ for (const pr of allProblems) {
   if (!ok) process.exitCode = 1
 }
 
-const q2 = TOPIC2_QUESTIONS.length
-results.push(q2 >= 65 ? `OK   topic 2 bank size ${q2}` : `FAIL topic 2 bank size ${q2} (expected >= 65)`)
-if (q2 < 65) process.exitCode = 1
+const bankSizes: [string, number][] = [
+  ['topic 1', TOPIC1_QUESTIONS.length],
+  ['topic 2', TOPIC2_QUESTIONS.length],
+  ['topic 3', TOPIC3_QUESTIONS.length],
+  ['topic 4', TOPIC4_QUESTIONS.length],
+  ['topic 5', TOPIC5_QUESTIONS.length],
+  ['topic 6', TOPIC6_QUESTIONS.length],
+]
+for (const [name, n] of bankSizes) {
+  results.push(n > 0 ? `OK   ${name} bank size ${n}` : `FAIL ${name} bank is empty`)
+  if (n === 0) process.exitCode = 1
+}
+const unitTotal = UNIT1_QUESTIONS.length
+results.push(
+  unitTotal >= 250
+    ? `OK   unit 1 total ${unitTotal} questions (>= 250)`
+    : `FAIL unit 1 total ${unitTotal} questions (expected >= 250)`,
+)
+if (unitTotal < 250) process.exitCode = 1
+
+/* every topic referenced by a question must exist */
+const knownTopicIds = new Set(UNIT1.topics.map((t) => t.id))
+const orphanQs = allQuestions.filter((q) => !knownTopicIds.has(q.topicId))
+results.push(
+  orphanQs.length === 0
+    ? 'OK   every question maps to a known topic'
+    : `FAIL questions with unknown topic: ${orphanQs.slice(0, 5).map((q) => q.id).join(', ')}`,
+)
+if (orphanQs.length) process.exitCode = 1
+
+/* topic 4 source note must disclose that level values are Engineering Insight */
+results.push(
+  SOURCE_NOTE4.coverage.includes('Engineering Insight')
+    ? 'OK   topic 4 discloses that numeric level values are Engineering Insight'
+    : 'FAIL topic 4 does not disclose the provenance of its level values',
+)
+if (!SOURCE_NOTE4.coverage.includes('Engineering Insight')) process.exitCode = 1
+
+/* review faults present for the matrix topics */
+results.push(PM_REVIEW_FAULTS.length === 5 ? 'OK   topic 5 review faults (5)' : 'FAIL topic 5 review faults')
+results.push(DM_REVIEW_FAULTS.length === 5 ? 'OK   topic 6 review faults (5)' : 'FAIL topic 6 review faults')
+if (PM_REVIEW_FAULTS.length !== 5 || DM_REVIEW_FAULTS.length !== 5) process.exitCode = 1
+
+/* logic family data sanity */
+const badFamily = LOGIC_FAMILIES.filter((f) => f.vihMin <= f.vilMax || f.vohMin <= f.volMax)
+results.push(
+  badFamily.length === 0
+    ? `OK   logic family levels ordered (${LOGIC_FAMILIES.length} families)`
+    : `FAIL inconsistent logic levels: ${badFamily.map((f) => f.id).join(', ')}`,
+)
+if (badFamily.length) process.exitCode = 1
 
 console.log(results.join('\n'))

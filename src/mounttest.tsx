@@ -256,35 +256,55 @@ async function main() {
     )
   })
 
-  /* ---------------- Topic 2 ---------------- */
+  /* ---------------- Topics 2 to 6 ---------------- */
 
-  check('navigate to Topic 2 from the sidebar', () => {
-    click(byText('.topic-link', 'Reliability'), 'Topic 2 link')
-    const txt = container.textContent ?? ''
-    assert(txt.includes('Topic 2 — System Reliability'), 'topic 2 heading missing')
-    assert(txt.includes('exponential'), 'topic 2 content missing')
-  })
-
-  const T2_TABS = [
-    'Theory',
-    'Numericals',
-    'Bathtub Analysis',
-    'Design',
-    'Debugging',
-    'Viva',
-    'Quiz',
-    'Exam',
-    'Question Bank',
-    'Progress',
+  const LIVE_TOPICS: { link: string; heading: string; tabs: string[] }[] = [
+    {
+      link: 'Reliability',
+      heading: 'Topic 2 — System Reliability',
+      tabs: ['Theory', 'Numericals', 'Bathtub Analysis', 'Design', 'Debugging', 'Viva', 'Quiz', 'Exam', 'Question Bank', 'Progress'],
+    },
+    {
+      link: 'Op-Amp',
+      heading: 'Topic 3 — Op-Amp Characteristics',
+      tabs: ['Theory', 'Numericals', 'Circuit Analysis', 'Design', 'Debugging', 'Viva', 'Quiz', 'Exam', 'Question Bank', 'Progress'],
+    },
+    {
+      link: 'TTL & CMOS',
+      heading: 'Topic 4 — TTL and CMOS',
+      tabs: ['Theory', 'Numericals', 'Interface Analysis', 'Design', 'Debugging', 'Viva', 'Quiz', 'Exam', 'Question Bank', 'Progress'],
+    },
+    {
+      link: 'Performance Matrix',
+      heading: 'Topic 5 — System Performance Matrix',
+      tabs: ['Theory', 'Matrix Lab', 'Analysis', 'Design', 'Review Faults', 'Viva', 'Quiz', 'Exam', 'Question Bank', 'Progress'],
+    },
+    {
+      link: 'Design Matrix',
+      heading: 'Topic 6 — Design Matrix',
+      tabs: ['Theory', 'Matrix Lab', 'Analysis', 'Design', 'Review Faults', 'Viva', 'Quiz', 'Exam', 'Question Bank', 'Progress'],
+    },
   ]
-  for (const tab of T2_TABS) {
-    check(`topic 2 tab → ${tab}`, () => {
-      click(byText('.tabs button', tab), `t2 tab ${tab}`)
-      assert((container.textContent ?? '').length > 200, `${tab} rendered nothing`)
+
+  for (const t of LIVE_TOPICS) {
+    check(`navigate to ${t.heading} from the sidebar`, () => {
+      click(byText('.topic-link', t.link), `${t.heading} link`)
+      assert(
+        (container.textContent ?? '').includes(t.heading),
+        `${t.heading} heading missing`,
+      )
     })
+
+    for (const tab of t.tabs) {
+      check(`${t.heading} tab → ${tab}`, () => {
+        click(byText('.tabs button', tab), `${t.heading} tab ${tab}`)
+        assert((container.textContent ?? '').length > 200, `${tab} rendered nothing`)
+      })
+    }
   }
 
   check('reliability solver accepts MTBF step', () => {
+    click(byText('.topic-link', 'Reliability'), 'Reliability')
     click(byText('.tabs button', 'Numericals'), 'Numericals')
     const inputs = qa('.step input[type="text"]') as HTMLInputElement[]
     assert(inputs.length >= 1, 'no solver inputs')
@@ -313,19 +333,72 @@ async function main() {
     assert(txt.includes('Improvement — component level'), 'improvement panel missing')
   })
 
-  check('unit 1 question bank aggregates both topics', () => {
+  check('op-amp lab computes the supplied problem currents', () => {
+    click(byText('.topic-link', 'Op-Amp'), 'Op-Amp')
+    click(byText('.tabs button', 'Circuit Analysis'), 'Circuit Analysis')
+    const txt = container.textContent ?? ''
+    // defaults: R1 10k, Rf 20k, Vi 3V, RL 2k, IQ 0.5mA, +/-15V
+    assert(txt.includes('Vo = -6.00 V'), `expected Vo = -6.00 V, got none`)
+    assert(txt.includes('3.50'), 'IEE = 3.50 mA not shown')
+    assert(txt.includes('0.50'), 'ICC = 0.50 mA not shown')
+  })
+
+  check('logic interface lab flags the TTL-to-CMOS HIGH-state failure', () => {
+    click(byText('.topic-link', 'TTL & CMOS'), 'TTL & CMOS')
+    click(byText('.tabs button', 'Interface Analysis'), 'Interface Analysis')
+    const txt = container.textContent ?? ''
+    assert(txt.includes('VNH'), 'noise margin read-out missing')
+    assert(txt.includes('Interface NOT valid'), 'the default 74LS -> 74HC case should be invalid')
+    assert(
+      txt.includes('Pull-up resistor at TTL output'.slice(0, 20)) ||
+        txt.includes('pull-up resistor at the TTL output'),
+      'the source fix is not shown',
+    )
+  })
+
+  check('matrix builder recomputes when a weight changes', () => {
+    click(byText('.topic-link', 'Performance Matrix'), 'Performance Matrix')
+    click(byText('.tabs button', 'Matrix Lab'), 'Matrix Lab')
+    const sliders = qa('.slider input[type="range"]') as HTMLInputElement[]
+    assert(sliders.length >= 4, 'no weight sliders found')
+    const before = container.textContent ?? ''
+    const setRange = (el: HTMLInputElement, v: string) => {
+      act(() => {
+        const setter = Object.getOwnPropertyDescriptor(
+          dom.window.HTMLInputElement.prototype,
+          'value',
+        )?.set
+        setter?.call(el, v)
+        el.dispatchEvent(new dom.window.Event('input', { bubbles: true }))
+      })
+    }
+    setRange(sliders[0], '0')
+    setRange(sliders[4], '5')
+    const after = container.textContent ?? ''
+    assert(before !== after, 'the matrix did not recompute when a weight changed')
+  })
+
+  check('unit 1 question bank aggregates every topic', () => {
     click(byText('.topic-link', 'Question Bank (Unit 1)'), 'unit bank link')
     const cards = qa('.qcard')
-    assert(cards.length === 105, `expected 105 cards in the unit bank, got ${cards.length}`)
-    const selects = qa('.filters select')
-    assert(selects.length >= 5, 'topic filter not present on the combined bank')
+    assert(cards.length === 252, `expected 252 cards in the unit bank, got ${cards.length}`)
+    const topicSelect = dom.window.document.getElementById('f-topic')
+    assert(topicSelect, 'the combined bank has no topic filter')
+    const opts = (topicSelect as unknown as HTMLSelectElement).options
+    assert(
+      opts.length === 7,
+      `expected an All option plus 6 topics, got ${opts.length} options`,
+    )
   })
 
   check('localStorage persisted the progress', () => {
     const raw = dom.window.localStorage.getItem('esd-learning-lab:v1')
     assert(raw, 'nothing written to localStorage')
     const parsed = JSON.parse(raw!)
-    assert(parsed.activity.length >= 16, `expected >= 16 visited sections across 2 topics, got ${parsed.activity?.length}`)
+    assert(
+      parsed.activity.length >= 48,
+      `expected >= 48 visited sections across 6 topics, got ${parsed.activity?.length}`,
+    )
     assert(parsed.attempts.length >= 2, `expected >= 2 attempts, got ${parsed.attempts?.length}`)
   })
 
