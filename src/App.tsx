@@ -1,16 +1,19 @@
 import { HashRouter, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { ProgressProvider, useProgress } from './lib/progress'
-import { UNIT1 } from './data/unit1/unit1'
+import { UNIT1, TOPIC_SECTION_IDS } from './data/unit1/unit1'
 import { Topic1Page } from './pages/Topic1Page'
+import { Topic2Page } from './pages/Topic2Page'
 import { PlannedTopicPage } from './pages/PlannedTopicPage'
+import { Unit1BankPage } from './pages/Unit1BankPage'
 import { TopicProgressDot } from './components/ProgressTracker'
 import { MODE_LABEL } from './types'
 
-const SECTION_IDS = ['theory', 'numericals', 'analysis', 'design', 'debugging', 'viva', 'quiz', 'exam'] as const
+const SECTION_IDS = TOPIC_SECTION_IDS
 
 function Sidebar() {
   const navigate = useNavigate()
   const { topicId } = useParams()
+  const path = window.location.hash.replace(/^#/, '')
 
   return (
     <aside className="sidebar">
@@ -46,6 +49,22 @@ function Sidebar() {
           )
         })}
       </ul>
+
+      <div className="sidebar-section">
+        <div className="unit-label">Unit 1 resources</div>
+        <ul className="topic-list">
+          <li>
+            <button
+              className={`topic-link ${path === '/u1/bank' ? 'active' : ''}`}
+              onClick={() => navigate('/u1/bank')}
+            >
+              <span className="num">Σ</span>
+              <span>Question Bank (Unit 1)</span>
+              <span className="dot" />
+            </button>
+          </li>
+        </ul>
+      </div>
 
       <div className="sidebar-section">
         <div className="unit-label">Other units</div>
@@ -115,6 +134,7 @@ function Shell() {
         <main className="content">
           <Routes>
             <Route path="/" element={<Navigate to="/u1/u1t1" replace />} />
+            <Route path="/u1/bank" element={<Unit1BankPage />} />
             <Route path="/u1/:topicId" element={<TopicRouter />} />
             <Route path="*" element={<Navigate to="/u1/u1t1" replace />} />
           </Routes>
@@ -128,7 +148,9 @@ function TopicRouter() {
   const { topicId } = useParams()
   const topic = UNIT1.topics.find((t) => t.id === topicId)
   if (!topic) return <Navigate to="/u1/u1t1" replace />
-  return topic.id === 'u1t1' ? <Topic1Page /> : <PlannedTopicPage />
+  if (topic.id === 'u1t1') return <Topic1Page />
+  if (topic.id === 'u1t2') return <Topic2Page />
+  return <PlannedTopicPage />
 }
 
 export default function App() {

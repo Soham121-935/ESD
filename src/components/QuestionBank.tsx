@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import type { Question, QuestionType, DifficultyLevel } from '../types'
 import { QUESTION_TYPE_LABEL, LEVEL_LABEL } from '../types'
 import { SourceBadge } from './Provenance'
+import { UNIT1 } from '../data/unit1/unit1'
 
 type TypeFilter = 'all' | QuestionType | 'circuit' | 'numerical-group'
 type ProvFilter = 'all' | 'source' | 'insight'
@@ -30,12 +31,21 @@ export function QuestionBank({ questions }: { questions: Question[] }) {
   const [prov, setProv] = useState<ProvFilter>('all')
   const [marks, setMarks] = useState<'all' | '1-2' | '3-4' | '5+'>('all')
   const [search, setSearch] = useState('')
+  const [topic, setTopic] = useState<'all' | string>('all')
+
+  const topicOptions = useMemo(() => {
+    const ids = Array.from(new Set(questions.map((q) => q.topicId)))
+    return ids
+      .map((id) => ({ id, label: UNIT1.topics.find((t) => t.id === id)?.shortTitle ?? id }))
+      .sort((a, b) => a.id.localeCompare(b.id))
+  }, [questions])
   const [open, setOpen] = useState<Record<string, boolean>>({})
   const [showSol, setShowSol] = useState<Record<string, boolean>>({})
 
   const filtered = useMemo(() => {
     const group = TYPE_GROUPS.find((g) => g.id === type)
     return questions.filter((q) => {
+      if (topic !== 'all' && q.topicId !== topic) return false
       if (level !== 'all' && q.level !== level) return false
       if (group && !group.match(q)) return false
       if (prov !== 'all' && q.provenance !== prov) return false
@@ -49,7 +59,7 @@ export function QuestionBank({ questions }: { questions: Question[] }) {
       }
       return true
     })
-  }, [questions, level, type, prov, marks, search])
+  }, [questions, topic, level, type, prov, marks, search])
 
   const counts = useMemo(() => {
     const c: Record<string, number> = {}
@@ -69,6 +79,19 @@ export function QuestionBank({ questions }: { questions: Question[] }) {
       </div>
 
       <div className="filters">
+        {topicOptions.length > 1 && (
+          <div className="field">
+            <label htmlFor="f-topic">Topic</label>
+            <select id="f-topic" value={topic} onChange={(e) => setTopic(e.target.value)}>
+              <option value="all">All topics</option>
+              {topicOptions.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <div className="field">
           <label htmlFor="f-type">Type</label>
           <select id="f-type" value={type} onChange={(e) => setType(e.target.value as TypeFilter)}>

@@ -40,14 +40,21 @@ changed; where the source does not support a detail, the gap is stated rather th
 ## Current state
 
 **Unit 1 → Topic 1 — Electronic System Classification: complete.**
+**Unit 1 → Topic 2 — System Reliability: complete.**
 
-Implemented: three study modes (Beginner / Intermediate / Exam-8-mark), interactive system block
+Topic 1 — three study modes (Beginner / Intermediate / Exam-8-mark), interactive system block
 diagram, the supplied comparison matrix, a numerical solver with a temperature-margin what-if
 simulator, a design challenge, two debugging cases, viva engine with follow-up chains, quiz engine,
 exam mode, a 40-question filterable question bank, and local progress tracking with weak-area
 analysis.
 
-Topics 2–6 are routed but display a "not built yet" placeholder. They will be built topic by topic
+Topic 2 — interactive reliability explorer for R(t) = e^(−λt) including the source's own anchor
+point (t = m → R = 37%), an interactive bathtub curve with per-region causes and improvement
+actions at component and system level, a stress-severity toggle (source Graph A / Graph B), four
+worked numerical problems, a reliability design challenge, two fault cases, and a 65-question bank.
+Combined Unit 1 bank: 105 questions.
+
+Topics 3–6 are routed but display a "not built yet" placeholder. They will be built topic by topic
 in subsequent passes.
 
 ## Architecture

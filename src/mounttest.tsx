@@ -256,11 +256,76 @@ async function main() {
     )
   })
 
+  /* ---------------- Topic 2 ---------------- */
+
+  check('navigate to Topic 2 from the sidebar', () => {
+    click(byText('.topic-link', 'Reliability'), 'Topic 2 link')
+    const txt = container.textContent ?? ''
+    assert(txt.includes('Topic 2 — System Reliability'), 'topic 2 heading missing')
+    assert(txt.includes('exponential'), 'topic 2 content missing')
+  })
+
+  const T2_TABS = [
+    'Theory',
+    'Numericals',
+    'Bathtub Analysis',
+    'Design',
+    'Debugging',
+    'Viva',
+    'Quiz',
+    'Exam',
+    'Question Bank',
+    'Progress',
+  ]
+  for (const tab of T2_TABS) {
+    check(`topic 2 tab → ${tab}`, () => {
+      click(byText('.tabs button', tab), `t2 tab ${tab}`)
+      assert((container.textContent ?? '').length > 200, `${tab} rendered nothing`)
+    })
+  }
+
+  check('reliability solver accepts MTBF step', () => {
+    click(byText('.tabs button', 'Numericals'), 'Numericals')
+    const inputs = qa('.step input[type="text"]') as HTMLInputElement[]
+    assert(inputs.length >= 1, 'no solver inputs')
+    const set = (el: HTMLInputElement, v: string) => {
+      act(() => {
+        const setter = Object.getOwnPropertyDescriptor(
+          dom.window.HTMLInputElement.prototype,
+          'value',
+        )?.set
+        setter?.call(el, v)
+        el.dispatchEvent(new dom.window.Event('input', { bubbles: true }))
+      })
+    }
+    set(inputs[0], '100')
+    click(byText('.step .btn.primary', 'Check this step'), 'check MTBF step')
+    assert(q('.step.solved'), 'MTBF step was not solved')
+  })
+
+  check('bathtub curve region click opens the detail panel', () => {
+    click(byText('.tabs button', 'Bathtub Analysis'), 'Bathtub Analysis')
+    const band = qa('.circuit-shell svg g')[0]
+    assert(band, 'no region band found')
+    click(band, 'infant mortality band')
+    const txt = container.textContent ?? ''
+    assert(txt.includes('Infant mortality'), 'region detail did not open')
+    assert(txt.includes('Improvement — component level'), 'improvement panel missing')
+  })
+
+  check('unit 1 question bank aggregates both topics', () => {
+    click(byText('.topic-link', 'Question Bank (Unit 1)'), 'unit bank link')
+    const cards = qa('.qcard')
+    assert(cards.length === 105, `expected 105 cards in the unit bank, got ${cards.length}`)
+    const selects = qa('.filters select')
+    assert(selects.length >= 5, 'topic filter not present on the combined bank')
+  })
+
   check('localStorage persisted the progress', () => {
     const raw = dom.window.localStorage.getItem('esd-learning-lab:v1')
     assert(raw, 'nothing written to localStorage')
     const parsed = JSON.parse(raw!)
-    assert(parsed.activity.length >= 8, `expected >= 8 visited sections, got ${parsed.activity?.length}`)
+    assert(parsed.activity.length >= 16, `expected >= 16 visited sections across 2 topics, got ${parsed.activity?.length}`)
     assert(parsed.attempts.length >= 2, `expected >= 2 attempts, got ${parsed.attempts?.length}`)
   })
 
