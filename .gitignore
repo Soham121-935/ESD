@@ -1,6 +1,7 @@
 node_modules
 dist
 dist-smoke
+dist-mount
 dist-ssr
 *.tsbuildinfo
 dist-ssr

@@ -13,6 +13,8 @@ npm run dev        # dev server on 0.0.0.0:5173
 npm run build      # production build
 npm run typecheck  # tsc --noEmit
 npm run smoke      # SSR render of every page/component + data integrity checks
+npm run mounttest  # boots the real app in jsdom and drives the UI (25 assertions)
+npm test           # all three
 ```
 
 ## Source integrity
