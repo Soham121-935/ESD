@@ -13,9 +13,9 @@ export interface ClassWindow {
 }
 
 const SOURCE_WINDOWS: ClassWindow[] = [
-  { id: 'consumer', name: 'Consumer', min: 0, max: 70, cost: 'Should be affordable', color: '#8fd6ff', provenance: 'source' },
-  { id: 'industry', name: 'Industry', min: -25, max: 85, cost: 'Development cost higher', color: '#ffd79a', provenance: 'source' },
-  { id: 'military', name: 'Military', min: -55, max: 125, cost: 'Very High', color: '#b9a6ff', provenance: 'source' },
+  { id: 'consumer', name: 'Consumer', min: 0, max: 70, cost: 'Should be affordable', color: '#0369a1', provenance: 'source' },
+  { id: 'industry', name: 'Industry', min: -25, max: 85, cost: 'Development cost higher', color: '#b45309', provenance: 'source' },
+  { id: 'military', name: 'Military', min: -55, max: 125, cost: 'Very High', color: '#6d28d9', provenance: 'source' },
 ]
 
 const SCALE_MIN = -70
@@ -121,7 +121,7 @@ export function TemperatureWindowSim() {
                 x2={sx(t, W)}
                 y1={14}
                 y2={H - 16}
-                stroke="var(--line-soft)"
+                stroke="#e2e8f0"
                 strokeWidth="1"
               />
               <text
@@ -141,7 +141,7 @@ export function TemperatureWindowSim() {
             y={bandY - 10}
             width={Math.max(2, sx(effMax, W) - sx(tMin, W))}
             height={H - 16 - (bandY - 10)}
-            fill="rgba(245,167,66,0.12)"
+            fill="rgba(180,83,9,0.07)"
             stroke="var(--amber)"
             strokeDasharray="4 3"
           />
@@ -165,8 +165,8 @@ export function TemperatureWindowSim() {
                   width={sx(r.max, W) - sx(r.min, W)}
                   height={bandH}
                   rx="4"
-                  fill={r.pass ? r.color : 'rgba(255,255,255,0.05)'}
-                  fillOpacity={r.pass ? 0.28 : 1}
+                  fill={r.pass ? r.color : 'rgba(15,23,42,0.04)'}
+                  fillOpacity={r.pass ? 0.12 : 1}
                   stroke={r.pass ? r.color : 'var(--red)'}
                   strokeDasharray={r.pass ? undefined : '4 3'}
                 />

@@ -30,7 +30,7 @@ export function Callout({
 /** Compact legend explaining the two provenance colours. */
 export function ProvenanceLegend() {
   return (
-    <div className="row tight" style={{ marginBottom: '0.9rem' }}>
+    <div className="provenance-legend">
       <span className="badge source">Source material</span>
       <span className="small faint">from the supplied PDFs</span>
       <span className="badge insight">Engineering Insight</span>

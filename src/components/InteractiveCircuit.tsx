@@ -77,7 +77,7 @@ export function InteractiveCircuit({ nodes, edges, height = 360, width = 760, ca
         <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={caption ?? 'System diagram'}>
           <defs>
             <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
-              <path d="M0,0 L0,6 L8,3 z" fill="var(--line)" />
+              <path d="M0,0 L0,6 L8,3 z" fill="#cbd5e1" />
             </marker>
             <marker id="arrow-on" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
               <path d="M0,0 L0,6 L8,3 z" fill="var(--accent)" />

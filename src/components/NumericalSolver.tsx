@@ -142,7 +142,7 @@ export function NumericalSolver({
             <div className="step-head">
               <span className="step-n">Step {i + 1}</span>
               {st === 'solved' ? (
-                <span className="badge" style={{ color: 'var(--green)', borderColor: '#2b6b3f' }}>
+                <span className="badge" style={{ color: 'var(--green)', borderColor: '#bbf7d0', background: 'var(--green-soft)' }}>
                   solved
                 </span>
               ) : st === 'locked' ? (
